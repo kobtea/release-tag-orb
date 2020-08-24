@@ -1,0 +1,35 @@
+description: >
+  Cut release tag
+
+parameters:
+  force:
+    description: Replace an existing tag
+    type: boolean
+    default: false
+  message:
+    description: Tag message, __VERSION__ will replace its version number
+    type: string
+    default: release __VERSION__
+  only_major_version:
+    description: Use only major version
+    type: boolean
+    default: false
+  prefix:
+    description: Prefix for release tag
+    type: string
+    default: v
+  suffix:
+    description: Suffix for release tag
+    type: string
+    default: ''
+
+steps:
+  - run:
+      environment:
+        INPUT_FORCE: << parameters.force >>
+        INPUT_MESSAGE: << parameters.message >>
+        INPUT_ONLY_MAJOR_VERSION: << parameters.only_major_version >>
+        INPUT_PREFIX: << parameters.prefix >>
+        INPUT_SUFFIX: << parameters.suffix >>
+      name: Cut release tag
+      command: << include(scripts/tagging.sh) >>

@@ -1,0 +1,22 @@
+description: >
+  Cut release tag with a major version
+
+executor: default
+
+parameters:
+  fingerprint:
+    description: fingerprints of ssh key
+    type: string
+    default: ''
+
+steps:
+  - when:
+      condition: << parameters.fingerprint >>
+      steps:
+        - add_ssh_keys:
+            fingerprints:
+              - << parameters.fingerprint >>
+  - checkout
+  - tagging:
+      force: true
+      only_major_version: true

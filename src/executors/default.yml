@@ -1,0 +1,5 @@
+description: >
+  Default executor for release-tag
+
+docker:
+  - image: alpine/git
