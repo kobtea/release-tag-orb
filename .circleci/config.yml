@@ -51,7 +51,7 @@ workflows:
           orb-name: kobtea/release-tag
           add-pr-comment: false
           publish-version-tag: true
-          ssh-fingerprints: ''
+          ssh-fingerprints: 5a:ae:7b:eb:ca:75:6e:a7:66:7b:f5:1e:0d:41:e1:bb
           fail-if-semver-not-indicated: false
           # requires:
           #   - integration-test-1
