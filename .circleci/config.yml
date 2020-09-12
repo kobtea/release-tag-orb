@@ -1,0 +1,60 @@
+version: 2.1
+
+orbs:
+  release-tag: kobtea/release-tag@<<pipeline.parameters.dev-orb-version>>
+  orb-tools: circleci/orb-tools@10
+  shellcheck: circleci/shellcheck@2.0
+
+parameters:
+  run-integration-tests:
+    type: boolean
+    default: false
+  dev-orb-version:
+    type: string
+    default: "dev:alpha"
+
+jobs:
+  integration-test-1:
+    executor: orb-tools/ubuntu
+    steps:
+      - checkout
+    # Test your orb e.g.
+    # - your-orb/your-orb-command
+
+workflows:
+  test-pack:
+    unless: << pipeline.parameters.run-integration-tests >>
+    jobs:
+      - orb-tools/lint
+      - orb-tools/pack
+      - shellcheck/check:
+          dir: ./src/scripts
+          exclude: SC2148
+      - orb-tools/publish-dev:
+          context: org-global
+          orb-name: kobtea/release-tag
+          requires:
+            - orb-tools/lint
+            - orb-tools/pack
+            - shellcheck/check
+      - orb-tools/trigger-integration-tests-workflow:
+          context: org-global
+          name: trigger-integration-dev
+          requires:
+            - orb-tools/publish-dev
+
+  integration-test_deploy:
+    when: << pipeline.parameters.run-integration-tests >>
+    jobs:
+      # - integration-test-1
+      - orb-tools/dev-promote-prod-from-commit-subject:
+          orb-name: kobtea/release-tag
+          add-pr-comment: false
+          publish-version-tag: true
+          ssh-fingerprints: ''
+          fail-if-semver-not-indicated: false
+          # requires:
+          #   - integration-test-1
+          filters:
+            branches:
+              only: master
