@@ -48,6 +48,7 @@ workflows:
     jobs:
       # - integration-test-1
       - orb-tools/dev-promote-prod-from-commit-subject:
+          context: org-global
           orb-name: kobtea/release-tag
           add-pr-comment: false
           publish-version-tag: true
